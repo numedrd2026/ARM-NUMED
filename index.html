@@ -70,7 +70,7 @@ function record(eventType,tableName,recordId,from,to,summary=''){
 }
 function toast(msg){let el=document.getElementById('toast');if(!el)return;el.textContent=msg;el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),3400)}
 async function loadLive(){
- const u=await supa.auth.getUser();if(u.error)throw u.error;
+ const ss=await supa.auth.getSession();if(!ss.data||!ss.data.session){ui.user=null;renderLogin();return}const u=await supa.auth.getUser();if(u.error){if(/session/i.test(u.error.message||'')){await supa.auth.signOut();ui.user=null;renderLogin();return}throw u.error}
  const user=u.data?.user;if(!user){ui.user=null;renderLogin();return}
  const pr=await supa.from('arm_profiles').select('id,full_name,role,active').eq('id',user.id).single();
  if(pr.error)throw new Error('Perfil no disponible: '+pr.error.message);
